@@ -1,5 +1,5 @@
 updater
 =======
 
-Updates dependency information based on rules defined in manifest file.
+This component updates dependency information based on rules defined in manifest file.
 
