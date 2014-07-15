@@ -51,8 +51,7 @@ class UpdateFinder():
 
 				# Substitute version in all manifest properties:
 				if detector_type == "version":
-					vars = {"VERSION": update["version"]}
-					subst_vars(manifest, vars)
+					subst_vars(manifest, {"VERSION": update["version"]})
 
 		return update
 
