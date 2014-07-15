@@ -1,11 +1,13 @@
 import urllib2
-from lxml import etree
+from lxml import etree, html
 
 class Extractor():
 	""" Abstract information extractor """
-	def retrieve(options):
+	def retrieve(self, options):
 		raise NotImplementedError
 
+	def get_text(self, options):
+		raise NotImplementedError
 
 class XPathExtractor():
 	""" XPath-based information extractor """
@@ -23,4 +25,10 @@ class XPathExtractor():
 			self.page_cache[url] = page
 
 		return page.xpath(options["xpath"])
+
+	def get_text(self, options):
+		try:
+			return self.retrieve(options)[0].text
+		except KeyError:
+			return None
 

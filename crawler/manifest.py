@@ -1,6 +1,18 @@
 import os
 import json
 
+def subst_vars(e, vars):
+	""" Substitutes variables inside given object """
+	if isinstance(e, dict):
+		for k, v in e.iteritems():
+			e[k] = subst_vars(v, vars)
+	elif isinstance(e, list):
+		return [subst_vars(v, vars) for v in e]
+	else:
+		for k, v in vars.iteritems():
+			e = e.replace("${%s}" % k, v)
+	return e
+
 class ManifestLoader():
 	""" Abstract dependency manifest loader """
 
@@ -21,18 +33,6 @@ class ManifestLoader():
 				self.merge(template[k], v)
 			else:
 				template[k] = v
-
-	def subst_vars(self, e, vars):
-		""" Substitutes variables inside given object """
-		if isinstance(e, dict):
-			for k, v in e.iteritems():
-				e[k] = self.subst_vars(v, vars)
-		elif isinstance(e, list):
-			return [self.subst_vars(v, vars) for v in e]
-		else:
-			for k, v in vars.iteritems():
-				e = e.replace("${%s}" % k, v)
-		return e
 
 	def load(self, name):
 		""" Loads manifest """
@@ -55,7 +55,7 @@ class ManifestLoader():
 		except KeyError:
 			pass
 
-		manifest = self.subst_vars(manifest, vars)
+		manifest = subst_vars(manifest, vars)
 		return manifest
 
 

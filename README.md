@@ -1,5 +1,6 @@
-updater
+crawler
 =======
 
-This component updates dependency information based on rules defined in manifest file.
+This component crawls Internet for finding dependency updates using rules defined
+in its manifest file.
 
