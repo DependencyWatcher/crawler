@@ -7,9 +7,9 @@ sys.dont_write_bytecode = True
 from crawler.updates import *
 from crawler.manifest import *
 
-m = FileManifestLoader().load("commons-math")
-update = UpdateFinder().find_update(m)
-
+# Test: iterate on all manifests, resolve updates and print them:
 import pprint
-pprint.pprint(update)
+for m in FileManifestLoader().load_all():
+	update = UpdateFinder().find_update(m)
+	pprint.pprint(update)
 

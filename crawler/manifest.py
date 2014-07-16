@@ -17,11 +17,15 @@ class ManifestLoader():
 	""" Abstract dependency manifest loader """
 
 	def read_manifest(self, name):
-		""" Reads manifest file """
+		""" Reads manifest """
 		raise NotImplementedError
 
 	def read_template(self, name):
-		""" Reads manifest template file """
+		""" Reads manifest template """
+		raise NotImplementedError
+
+	def read_all_manifests(self, name):
+		""" Returns generator allowing to iterate on all manifests """
 		raise NotImplementedError
 
 	def merge(self, template, manifest):
@@ -34,10 +38,8 @@ class ManifestLoader():
 			else:
 				template[k] = v
 
-	def load(self, name):
-		""" Loads manifest """
-		manifest = self.read_manifest(name)
-
+	def postload(self, manifest):
+		""" This method resolves extended template, and substitutes needed variables into loaded manifest """
 		vars = {"NAME": manifest["name"]}
 		try:
 			extends = manifest["extends"]
@@ -58,6 +60,16 @@ class ManifestLoader():
 		manifest = subst_vars(manifest, vars)
 		return manifest
 
+	def load(self, name):
+		""" Loads manifest """
+		manifest = self.read_manifest(name)
+		return self.postload(manifest)
+
+	def load_all(self):
+		""" Returns generator of all existing manifests """
+		for manifest in self.read_all_manifests():
+			yield self.postload(manifest)
+
 
 class FileManifestLoader(ManifestLoader):
 	""" Manifest loader that looks for JSON files in file system """
@@ -68,13 +80,19 @@ class FileManifestLoader(ManifestLoader):
 		return os.path.join(self.parent_dir, prefix_dir, "/".join([i for i in name[0:4]]), "%s.json" % name)
 
 	def read_manifest(self, name):
-		with open(self.get_file(name)) as f:
+		with open(self.get_file(name, "_m")) as f:
 			return json.load(f)
 
 	def read_template(self, name):
 		with open(self.get_file(name, "_t")) as f:
 			return json.load(f)
 
+	def read_all_manifests(self):
+		for root, dirs, files in os.walk(os.path.join(self.parent_dir, "_m")):
+			for name in files:
+				if name.endswith(".json"):
+					with open(os.path.join(root, name)) as f:
+						yield json.load(f)
 
 class DBManifestLoader(ManifestLoader):
 	""" Manifest loader that looks for JSON objects in DB """
