@@ -1,5 +1,8 @@
 import urllib2
+import logging
 from lxml import etree, html
+
+logger = logging.getLogger(__name__)
 
 class Extractor():
 	""" Abstract information extractor """
@@ -19,16 +22,23 @@ class XPathExtractor():
 		try:
 			page = self.page_cache[url]
 		except KeyError:
+			logger.info("Opening URL: %s" % url)
 			response = urllib2.urlopen(url)
-			htmlparser = etree.HTMLParser()
-			page = etree.parse(response, etree.HTMLParser())
+			if url.endswith(".xml"):
+				parser = etree.XMLParser()
+			else:
+				parser = etree.HTMLParser()
+			page = etree.parse(response, parser)
 			self.page_cache[url] = page
 
 		return page.xpath(options["xpath"])
 
 	def get_text(self, options):
 		try:
-			return self.retrieve(options)[0].text
+			r = self.retrieve(options)[0]
+			if type(r) is etree._ElementStringResult:
+				return r
+			return r.text
 		except KeyError:
 			return None
 

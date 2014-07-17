@@ -41,6 +41,18 @@ class ManifestLoader():
 	def postload(self, manifest):
 		""" This method resolves extended template, and substitutes needed variables into loaded manifest """
 		vars = {"NAME": manifest["name"]}
+
+		# Add Maven specific variables
+		try:
+			for alias in manifest["aliases"]:
+				try:
+					vars["MVN_PATH"] = ".".join(alias.split(":")).replace(".", "/")
+					break
+				except ValueError:
+					pass
+		except KeyError:
+			pass
+
 		try:
 			extends = manifest["extends"]
 			try:
@@ -80,15 +92,15 @@ class FileManifestLoader(ManifestLoader):
 		return os.path.join(self.parent_dir, prefix_dir, "/".join([i for i in name[0:4]]), "%s.json" % name)
 
 	def read_manifest(self, name):
-		with open(self.get_file(name, "_m")) as f:
+		with open(self.get_file(name, "manifests")) as f:
 			return json.load(f)
 
 	def read_template(self, name):
-		with open(self.get_file(name, "_t")) as f:
+		with open(self.get_file(name, "templates")) as f:
 			return json.load(f)
 
 	def read_all_manifests(self):
-		for root, dirs, files in os.walk(os.path.join(self.parent_dir, "_m")):
+		for root, dirs, files in os.walk(os.path.join(self.parent_dir, "manifests")):
 			for name in files:
 				if name.endswith(".json"):
 					with open(os.path.join(root, name)) as f:

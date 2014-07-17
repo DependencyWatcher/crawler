@@ -1,3 +1,5 @@
+from datetime import datetime
+
 class Detector():
 	def __init__(self, extractor):
 		self.extractor = extractor
@@ -12,10 +14,12 @@ class VersionDetector(Detector):
 	def detect(self, options, result):
 		result["version"] = self.extractor.get_text(options)
 
+
 class UpdateTimeDetector(Detector):
 	""" Detects latest version update date """
 	def detect(self, options, result):
-		result["lastUpdate"] = self.extractor.get_text(options)
+		date_text = self.extractor.get_text(options)
+		result["lastUpdate"] = datetime.strptime(date_text, options["format"]).strftime("%s")
 
 
 class ChangeListDetector(Detector):
