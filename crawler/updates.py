@@ -47,7 +47,8 @@ class UpdateFinder():
 		detectors = manifest["detectors"]
 		for detector_type in ["version"] + [k for k in detectors.keys() if k != "version"]:
 			for extractor_type, detector in detectors[detector_type].iteritems():
-				self.get_detector(detector_type, self.get_extractor(extractor_type)).detect(detector, update)
+				extractor = self.get_extractor(extractor_type)
+				self.get_detector(detector_type, extractor).detect(detector, update)
 
 				# Substitute version in all manifest properties:
 				if detector_type == "version":

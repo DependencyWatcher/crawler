@@ -22,7 +22,7 @@ class XPathExtractor():
 		try:
 			page = self.page_cache[url]
 		except KeyError:
-			logger.info("Opening URL: %s" % url)
+			logger.debug("Opening URL: %s" % url)
 			response = urllib2.urlopen(url)
 			if url.endswith(".xml"):
 				parser = etree.XMLParser()
@@ -31,7 +31,10 @@ class XPathExtractor():
 			page = etree.parse(response, parser)
 			self.page_cache[url] = page
 
-		return page.xpath(options["xpath"])
+		xpath = options["xpath"]
+		element = page.xpath(xpath)
+		logger.debug("Resolved XPath '%s': %s" % (xpath, element))
+		return element
 
 	def get_text(self, options):
 		try:

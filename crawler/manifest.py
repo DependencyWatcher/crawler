@@ -38,8 +38,7 @@ class ManifestLoader():
 			else:
 				template[k] = v
 
-	def postload(self, manifest):
-		""" This method resolves extended template, and substitutes needed variables into loaded manifest """
+	def get_default_vars(self, manifest):
 		vars = {"NAME": manifest["name"]}
 
 		# Add Maven specific variables
@@ -52,7 +51,13 @@ class ManifestLoader():
 					pass
 		except KeyError:
 			pass
+		return vars
+		
 
+	def postload(self, manifest):
+		""" This method resolves extended template, and substitutes needed variables into loaded manifest """
+
+		vars = self.get_default_vars(manifest)
 		try:
 			extends = manifest["extends"]
 			try:

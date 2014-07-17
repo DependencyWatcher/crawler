@@ -1,4 +1,7 @@
 from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Detector():
 	def __init__(self, extractor):
@@ -19,7 +22,9 @@ class UpdateTimeDetector(Detector):
 	""" Detects latest version update date """
 	def detect(self, options, result):
 		date_text = self.extractor.get_text(options)
-		result["lastUpdate"] = datetime.strptime(date_text, options["format"]).strftime("%s")
+		date_format = options["format"]
+		logger.debug("Converting date '%s' using format '%s'" % (date_text, date_format))
+		result["lastUpdate"] = datetime.strptime(date_text, date_format).strftime("%s")
 
 
 class ChangeListDetector(Detector):
