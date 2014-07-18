@@ -13,7 +13,7 @@ def subst_vars(e, vars):
 			e = e.replace("${%s}" % k, v)
 	return e
 
-class ManifestLoader():
+class ManifestLoader(object):
 	""" Abstract dependency manifest loader """
 
 	def read_manifest(self, name):
@@ -39,20 +39,7 @@ class ManifestLoader():
 				template[k] = v
 
 	def get_default_vars(self, manifest):
-		vars = {"NAME": manifest["name"]}
-
-		# Add Maven specific variables
-		try:
-			for alias in manifest["aliases"]:
-				try:
-					vars["MVN_PATH"] = ".".join(alias.split(":")).replace(".", "/")
-					break
-				except ValueError:
-					pass
-		except KeyError:
-			pass
-		return vars
-		
+		return {"NAME": manifest["name"]}
 
 	def postload(self, manifest):
 		""" This method resolves extended template, and substitutes needed variables into loaded manifest """
