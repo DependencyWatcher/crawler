@@ -13,6 +13,17 @@ def subst_vars(e, vars):
 			e = e.replace("${%s}" % k, v)
 	return e
 
+def merge_dicts(dict1, dict2):
+	""" Recursively merges dict2 into dict1 """
+	if not isinstance(dict1, dict) or not isinstance(dict2, dict):
+		return dict2
+	for k in dict2:
+		if k in dict1:
+			dict1[k] = merge_dicts(dict1[k], dict2[k])
+		else:
+			dict1[k] = dict2[k]
+	return dict1
+
 class ManifestLoader(object):
 	""" Abstract dependency manifest loader """
 
@@ -30,13 +41,7 @@ class ManifestLoader(object):
 
 	def merge(self, template, manifest):
 		""" Merges values from manifest into template """
-		for k, v in manifest.iteritems():
-			if isinstance(v, dict):
-				if not k in template:
-					template[k] = {}
-				self.merge(template[k], v)
-			else:
-				template[k] = v
+		return merge_dicts(template, manifest)
 
 	def get_default_vars(self, manifest):
 		return {"NAME": manifest["name"]}
@@ -56,8 +61,7 @@ class ManifestLoader(object):
 			template = self.read_template(extends["template"])
 			del manifest["extends"]
 
-			self.merge(template, manifest)
-			manifest = template
+			manifest = self.merge(template, manifest)
 		except KeyError:
 			pass
 

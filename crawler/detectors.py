@@ -27,6 +27,7 @@ class Detector(object):
 		raise NotImplementedError
 
 	def detect(self, what, options, result):
+		self.what = what
 		if what == "version":
 			return self.detect_last_version(options, result)
 		if what == "updatetime":
@@ -70,31 +71,42 @@ class XPathDetector(Detector):
 		logger.debug("Resolved XPath '%s': %s" % (xpath, element))
 		return element
 
-	def get_text(self, options):
+	def get_node_text(self, node):
+		if type(node) is etree._ElementStringResult:
+			return node
+		return "".join([x for x in node.itertext()])
+
+	def get_node_html(self, node):
+		return "".join([etree.tostring(child) for child in node.iterdescendants()])
+
+	def resolve_text(self, options):
 		try:
-			r = self.resolve(options)[0]
-			if type(r) is etree._ElementStringResult:
-				return r
-			return r.text
+			return self.get_node_text(self.resolve(options)[0])
 		except KeyError:
 			return None
 
 	def detect_last_version(self, options, result):
-		result["version"] = self.get_text(options)
+		result[self.what] = self.resolve_text(options)
 
 	def detect_update_time(self, options, result):
-		date_text = self.get_text(options)
+		date_text = self.resolve_text(options)
 
 		try:
-			date_format = options["format"]
+			date_format = options["dateFormat"]
 		except KeyError:
 			date_format = "%Y%m%d%H%M%S"
 
 		logger.debug("Converting date '%s' using format '%s'" % (date_text, date_format))
-		result["lastUpdate"] = datetime.strptime(date_text, date_format).strftime("%s")
+		result[self.what] = datetime.strptime(date_text, date_format).strftime("%s")
+
+	def detect_change_list(self, options, result):
+		changelist = []
+		for node in self.resolve(options):
+			changelist.append(self.get_node_html(node))
+		result[self.what] = changelist
 
 	def detect_license(self, options, result):
-		result["license"] = self.get_text(options)
+		result[self.what] = self.resolve_text(options)
 
 
 class MavenDetector(XPathDetector):
@@ -128,15 +140,16 @@ class MavenDetector(XPathDetector):
 
 	def resolve(self, options):
 		for url in self.get_urls(options):
-			result = super(MavenDetector, self).resolve({"url": url, "xpath": options["xpath"]})
+			new_options = dict(options.items() + [("url", url)])
+			result = super(MavenDetector, self).resolve(new_options)
 			if not result is None:
 				return result
 
 	def detect_last_version(self, options, result):
-		return super(MavenDetector, self)\
-			.detect_last_version({"xpath": "/metadata/versioning/release/text()|/metadata/version/text()"}, result)
+		new_options = dict(options.items() + [("xpath", "/metadata/versioning/release/text()|/metadata/version/text()")])
+		return super(MavenDetector, self).detect_last_version(new_options, result)
 
 	def detect_update_time(self, options, result):
-		return super(MavenDetector, self)\
-			.detect_update_time({"xpath": "/metadata/versioning/lastUpdated/text()"}, result)
+		new_options = dict(options.items() + [("xpath", "/metadata/versioning/lastUpdated/text()")])
+		return super(MavenDetector, self).detect_update_time(new_options, result)
 
