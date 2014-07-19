@@ -100,10 +100,13 @@ class XPathDetector(Detector):
 		result[self.what] = datetime.strptime(date_text, date_format).strftime("%s")
 
 	def detect_change_list(self, options, result):
-		changelist = []
-		for node in self.resolve(options):
-			changelist.append(self.get_node_html(node))
-		result[self.what] = changelist
+		try:
+			changelist = []
+			for node in self.resolve(options):
+				changelist.append(self.get_node_html(node))
+			result[self.what] = changelist
+		except HTTPError:
+			logger.warning("Couldn't resolve changelist")
 
 	def detect_license(self, options, result):
 		result[self.what] = self.resolve_text(options)

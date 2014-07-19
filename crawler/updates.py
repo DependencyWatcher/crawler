@@ -3,7 +3,8 @@ from crawler.manifest import subst_vars
 
 class UpdateFinder(object):
 
-	def find_update(self, manifest):
+	def find_update(self, manifest, last_version=None):
+		""" Finds update for the given dependency manifest """
 		update = {}
 
 		# Copy static fields:
@@ -25,7 +26,11 @@ class UpdateFinder(object):
 				detector.detect(what, detector_options, update)
 				# Substitute version in all manifest properties:
 				if what == "version":
+					if last_version == update["version"]:
+						raise AlreadyLatestVersion("%s is already at latest version" % manifest["name"])
 					subst_vars(manifest, {"VERSION": update["version"]})
 
 		return update
 
+class AlreadyLatestVersion(Exception):
+	pass
