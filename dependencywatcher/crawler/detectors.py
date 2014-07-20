@@ -50,7 +50,10 @@ class Detector(object):
 
 class XPathDetector(Detector):
 	""" XPath-based information detector """
-	page_cache = {}
+
+	def __init__(self, manifest):
+		self.page_cache = {}
+		super(XPathDetector, self).__init__(manifest)
 
 	def resolve(self, options):
 		url = options["url"]
