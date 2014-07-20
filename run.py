@@ -4,8 +4,8 @@ import sys
 # Disable creating .pyc files:
 sys.dont_write_bytecode = True
 
-from crawler.updates import *
-from crawler.manifest import *
+from dependencywatcher.crawler.updates import *
+from dependencywatcher.crawler.manifest import *
 
 import logging
 logging.basicConfig(level=logging.DEBUG)

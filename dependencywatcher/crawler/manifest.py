@@ -81,7 +81,7 @@ class ManifestLoader(object):
 
 class FileManifestLoader(ManifestLoader):
 	""" Manifest loader that looks for JSON files in file system """
-	def __init__(self, parent_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "manifests")):
+	def __init__(self, parent_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "manifests")):
 		self.parent_dir = parent_dir
 
 	def get_file(self, name, prefix_dir=""):

@@ -1,5 +1,5 @@
-from crawler.detectors import *
-from crawler.manifest import subst_vars
+from dependencywatcher.crawler.detectors import *
+from dependencywatcher.crawler.manifest import subst_vars
 
 class UpdateFinder(object):
 
