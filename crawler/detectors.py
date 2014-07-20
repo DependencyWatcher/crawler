@@ -105,7 +105,7 @@ class XPathDetector(Detector):
 			for node in self.resolve(options):
 				changelist.append(self.get_node_html(node))
 			result[self.what] = changelist
-		except HTTPError:
+		except urllib2.HTTPError:
 			logger.warning("Couldn't resolve changelist")
 
 	def detect_license(self, options, result):
