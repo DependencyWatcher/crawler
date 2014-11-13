@@ -32,5 +32,17 @@ class UpdateFinder(object):
 
 		return update
 
+	def find_update_using_maven(self, alias, version=None):
+		""" Finds update using Maven repositories """
+		manifest = {
+			"detectors": {
+				"version": { "maven": {} },
+				"updatetime": { "maven": {} }
+			},
+			"name": alias,
+			"aliases": [ alias ]
+		}
+		return self.find_update(manifest, version)
+
 class AlreadyLatestVersion(Exception):
 	pass

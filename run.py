@@ -8,11 +8,14 @@ from dependencywatcher.crawler.updates import *
 from dependencywatcher.crawler.manifest import *
 from multiprocessing.pool import ThreadPool
 
+import pprint
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
+#pprint.pprint(UpdateFinder().find_update_using_maven("org.apache.commons:commons-csv"))
+#sys.exit()
+
 # Test: iterate on all manifests, resolve updates and print them:
-import pprint
 def print_result(update):
 	pprint.pprint(update)
 
