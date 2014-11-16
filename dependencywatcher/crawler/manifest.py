@@ -35,7 +35,7 @@ class ManifestLoader(object):
 		""" Reads manifest template """
 		raise NotImplementedError
 
-	def read_all_manifests(self, name):
+	def read_all_manifests(self):
 		""" Returns generator allowing to iterate on all manifests """
 		raise NotImplementedError
 
@@ -101,8 +101,3 @@ class FileManifestLoader(ManifestLoader):
 				if name.endswith(".json"):
 					with open(os.path.join(root, name)) as f:
 						yield json.load(f)
-
-class DBManifestLoader(ManifestLoader):
-	""" Manifest loader that looks for JSON objects in DB """
-	pass
-

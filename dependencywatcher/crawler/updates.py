@@ -32,8 +32,8 @@ class UpdateFinder(object):
 
 		return update
 
-	def find_update_using_maven(self, alias, version=None):
-		""" Finds update using Maven repositories """
+	def resolve_and_find_update(self, alias, version=None):
+		""" Tries to look for an update for the given dependency alias using Maven repository """
 		manifest = {
 			"detectors": {
 				"version": { "maven": {} },
