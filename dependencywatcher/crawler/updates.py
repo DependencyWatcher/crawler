@@ -3,7 +3,7 @@ from dependencywatcher.crawler.manifest import subst_vars
 
 class UpdateFinder(object):
 
-	def find_update(self, manifest, last_version=None):
+	def find_update_using_manifest(self, manifest, last_version=None):
 		""" Finds update for the given dependency manifest """
 		update = {}
 
@@ -32,7 +32,7 @@ class UpdateFinder(object):
 
 		return update
 
-	def resolve_and_find_update(self, alias, version=None):
+	def find_update_using_alias(self, alias, last_version=None):
 		""" Tries to look for an update for the given dependency alias using Maven repository """
 		manifest = {
 			"detectors": {
@@ -42,7 +42,12 @@ class UpdateFinder(object):
 			"name": alias,
 			"aliases": [ alias ]
 		}
-		return self.find_update(manifest, version)
+		return self.find_update_using_manifest(manifest, last_version)
+
+	def find_update(self, what, last_version=None):
+		if isinstance(what, dict):
+			return self.find_update_using_manifest(what, last_version)
+		return self.find_update_using_alias(str(what), last_version)
 
 class AlreadyLatestVersion(Exception):
 	pass

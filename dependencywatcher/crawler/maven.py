@@ -17,7 +17,8 @@ class MavenDetector(XPathDetector):
 			# Search for Maven alias (such an alias will have a ':' separator):
 			for alias in self.manifest["aliases"]:
 				try:
-					url_path = "/".join(alias.replace(".", "/").split(":"))
+					s = alias.split(":")
+					url_path = "%s/%s" % (s[0].replace(".", "/"), s[1])
 					break
 				except ValueError:
 					pass
