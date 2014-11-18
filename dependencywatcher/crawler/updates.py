@@ -33,16 +33,18 @@ class UpdateFinder(object):
 		return update
 
 	def find_update_using_alias(self, alias, last_version=None):
-		""" Tries to look for an update for the given dependency alias using Maven repository """
-		manifest = {
-			"detectors": {
-				"version": { "maven": {} },
-				"updatetime": { "maven": {} }
-			},
-			"name": alias,
-			"aliases": [ alias ]
-		}
-		return self.find_update_using_manifest(manifest, last_version)
+		if ":" in alias:
+			""" Tries to look for an update for the given dependency alias using Maven repository """
+			manifest = {
+				"detectors": {
+					"version": { "maven": {} },
+					"updatetime": { "maven": {} }
+				},
+				"name": alias,
+				"aliases": [ alias ]
+			}
+			return self.find_update_using_manifest(manifest, last_version)
+		return None
 
 	def find_update(self, what, last_version=None):
 		if isinstance(what, dict):
