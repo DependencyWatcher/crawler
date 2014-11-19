@@ -24,6 +24,10 @@ class Detector(object):
 		""" Detects license name of the depdendency """
 		raise NotImplementedError
 
+	def detect_url(self, options, result):
+		""" Detects official homepage of the dependency """
+		raise NotImplementedError
+
 	def detect(self, what, options, result):
 		self.what = what
 		if what == "version":
@@ -34,6 +38,8 @@ class Detector(object):
 			return self.detect_change_list(options, result)
 		if what == "license":
 			return self.detect_license(options, result)
+		if what == "url":
+			return self.detect_url(options, result)
 		raise NotImplementedError("Detecting '%s' is not supported" % what)
 
 	@staticmethod

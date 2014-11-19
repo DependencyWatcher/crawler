@@ -38,7 +38,8 @@ class UpdateFinder(object):
 			manifest = {
 				"detectors": {
 					"version": { "maven": {} },
-					"updatetime": { "maven": {} }
+					"updatetime": { "maven": {} },
+					"url": { "maven": {} }
 				},
 				"name": alias,
 				"aliases": [ alias ]

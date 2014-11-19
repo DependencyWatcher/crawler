@@ -12,8 +12,8 @@ import pprint
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-#pprint.pprint(UpdateFinder().find_update("org.apache.commons:commons-csv"))
-#sys.exit()
+pprint.pprint(UpdateFinder().find_update("org.apache.commons:commons-csv"))
+sys.exit()
 
 # Test: iterate on all manifests, resolve updates and print them:
 def print_result(update):

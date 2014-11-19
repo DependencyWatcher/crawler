@@ -12,18 +12,23 @@ class XPathDetector(Detector):
 		self.page_cache = {}
 		super(XPathDetector, self).__init__(manifest)
 
-	def resolve(self, options):
+	def resolve(self, options, result):
 		url = options["url"]
 		try:
 			page = self.page_cache[url]
 		except KeyError:
 			logger.debug("Opening URL: %s" % url)
 			response = urllib2.urlopen(url)
-			if url.endswith(".xml"):
-				parser = etree.XMLParser()
+			if url.endswith(".xml") or url.endswith(".pom"):
+				it = etree.iterparse(response, resolve_entities=False)
+				for _, el in it:
+					try:
+						el.tag = el.tag.split("}", 1)[1]  # strip all namespaces
+					except IndexError:
+						pass
+				page = it.root
 			else:
-				parser = etree.HTMLParser()
-			page = etree.parse(response, parser)
+				page = etree.parse(response, etree.HTMLParser())
 			self.page_cache[url] = page
 
 		xpath = options["xpath"]
@@ -39,17 +44,19 @@ class XPathDetector(Detector):
 	def get_node_html(self, node):
 		return "".join([etree.tostring(child) for child in node.iterdescendants()])
 
-	def resolve_text(self, options):
+	def resolve_text(self, options, result):
 		try:
-			return self.get_node_text(self.resolve(options)[0])
-		except KeyError:
+			r = self.resolve(options, result)
+			if r:
+				return self.get_node_text(r[0])
+		except IndexError:
 			return None
 
-	def detect_last_version(self, options, result):
-		result[self.what] = self.resolve_text(options)
+	def detect_from_xpath(self, options, result):
+		result[self.what] = self.resolve_text(options, result)
 
 	def detect_update_time(self, options, result):
-		date_text = self.resolve_text(options)
+		date_text = self.resolve_text(options, result)
 
 		try:
 			date_format = options["dateFormat"]
@@ -68,6 +75,12 @@ class XPathDetector(Detector):
 		except urllib2.HTTPError:
 			logger.warning("Couldn't resolve changelist")
 
+	def detect_last_version(self, options, result):
+		self.detect_from_xpath(options, result)
+
 	def detect_license(self, options, result):
-		result[self.what] = self.resolve_text(options)
+		self.detect_from_xpath(options, result)
+
+	def detect_url(self, options, result):
+		self.detect_from_xpath(options, result)
 
