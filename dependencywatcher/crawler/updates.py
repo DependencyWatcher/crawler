@@ -22,6 +22,7 @@ class UpdateFinder(object):
 					detector = detectors_cache[detector_type]
 				except KeyError:
 					detector = Detector.create(detector_type, manifest)
+					detectors_cache[detector_type] = detector
 
 				detector.detect(what, detector_options, update)
 				# Substitute version in all manifest properties:

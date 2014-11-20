@@ -6,6 +6,12 @@ logger = logging.getLogger(__name__)
 class MavenDetector(XPathDetector):
 	""" This detector gets newest information from a Maven repository """
 
+	XPATHS = {
+		"version": "/metadata/versioning/release/text()|/metadata/version/text()",
+		"updatetime": "/metadata/versioning/lastUpdated/text()",
+		"url": "/project/url/text()"
+	}
+
 	def get_repositories(self, options):
 		try:
 			return [options["repository"]]
@@ -47,15 +53,7 @@ class MavenDetector(XPathDetector):
 			if r:
 				return r
 
-	def detect_last_version(self, options, result):
-		new_options = dict(options.items() + [("xpath", "/metadata/versioning/release/text()|/metadata/version/text()")])
-		return super(MavenDetector, self).detect_last_version(new_options, result)
-
-	def detect_update_time(self, options, result):
-		new_options = dict(options.items() + [("xpath", "/metadata/versioning/lastUpdated/text()")])
-		return super(MavenDetector, self).detect_update_time(new_options, result)
-
-	def detect_url(self, options, result):
-		new_options = dict(options.items() + [("xpath", "/project/url/text()")])
-		return super(MavenDetector, self).detect_url(new_options, result)
+	def detect(self, what, options, result):
+		new_options = dict(options.items() + [("xpath", MavenDetector.XPATHS[what])])
+		return super(MavenDetector, self).detect(what, new_options, result)
 

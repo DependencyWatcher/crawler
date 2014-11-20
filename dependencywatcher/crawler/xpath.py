@@ -52,35 +52,23 @@ class XPathDetector(Detector):
 		except IndexError:
 			return None
 
-	def detect_from_xpath(self, options, result):
-		result[self.what] = self.resolve_text(options, result)
-
-	def detect_update_time(self, options, result):
-		date_text = self.resolve_text(options, result)
-
-		try:
-			date_format = options["dateFormat"]
-		except KeyError:
-			date_format = "%Y%m%d%H%M%S"
-
-		logger.debug("Converting date '%s' using format '%s'" % (date_text, date_format))
-		result[self.what] = datetime.strptime(date_text, date_format).strftime("%s")
-
-	def detect_change_list(self, options, result):
-		try:
-			changelist = []
-			for node in self.resolve(options):
-				changelist.append(self.get_node_html(node))
-			result[self.what] = changelist
-		except urllib2.HTTPError:
-			logger.warning("Couldn't resolve changelist")
-
-	def detect_last_version(self, options, result):
-		self.detect_from_xpath(options, result)
-
-	def detect_license(self, options, result):
-		self.detect_from_xpath(options, result)
-
-	def detect_url(self, options, result):
-		self.detect_from_xpath(options, result)
+	def detect(self, what, options, result):
+		if what == "updatetime":
+			date_text = self.resolve_text(options, result)
+			try:
+				date_format = options["dateFormat"]
+			except KeyError:
+				date_format = "%Y%m%d%H%M%S"
+			logger.debug("Converting date '%s' using format '%s'" % (date_text, date_format))
+			result[what] = datetime.strptime(date_text, date_format).strftime("%s")
+		elif what == "changelist":
+			try:
+				changelist = []
+				for node in self.resolve(options):
+					changelist.append(self.get_node_html(node))
+				result[what] = changelist
+			except urllib2.HTTPError:
+				logger.warning("Couldn't resolve changelist")
+		else:
+			result[what] = self.resolve_text(options, result)
 
