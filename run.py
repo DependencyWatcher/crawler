@@ -12,7 +12,7 @@ import pprint
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-pprint.pprint(UpdateFinder().find_update("org.apache.commons:commons-csv"))
+pprint.pprint(UpdateFinder().find_update(FileManifestLoader().read_manifest("jquery")))
 sys.exit()
 
 # Test: iterate on all manifests, resolve updates and print them:

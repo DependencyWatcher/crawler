@@ -1,6 +1,6 @@
 from datetime import datetime
 from lxml import etree, html
-import urllib2, logging, _strptime
+import urllib2, logging, _strptime, re
 from dependencywatcher.crawler.detectors import Detector
 
 logger = logging.getLogger(__name__)
@@ -18,7 +18,8 @@ class XPathDetector(Detector):
 			page = self.page_cache[url]
 		except KeyError:
 			logger.debug("Opening URL: %s" % url)
-			response = urllib2.urlopen(url)
+			request = urllib2.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+			response = urllib2.urlopen(request)
 			if url.endswith(".xml") or url.endswith(".pom"):
 				it = etree.iterparse(response, resolve_entities=False)
 				for _, el in it:
@@ -48,7 +49,15 @@ class XPathDetector(Detector):
 		try:
 			r = self.resolve(options, result)
 			if r:
-				return self.get_node_text(r[0])
+				text = self.get_node_text(r[0])
+				try:
+					regex = re.compile(options["regex"])
+					m = regex.search(text)
+					if m:
+						text = m.group(1)
+				except KeyError:
+					pass
+				return text
 		except IndexError:
 			return None
 
