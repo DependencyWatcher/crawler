@@ -1,6 +1,6 @@
 from datetime import datetime
 from lxml import etree, html
-import urllib2, logging
+import urllib2, logging, _strptime
 from dependencywatcher.crawler.detectors import Detector
 
 logger = logging.getLogger(__name__)
@@ -60,7 +60,7 @@ class XPathDetector(Detector):
 			except KeyError:
 				date_format = "%Y%m%d%H%M%S"
 			logger.debug("Converting date '%s' using format '%s'" % (date_text, date_format))
-			result[what] = datetime.strptime(date_text, date_format).strftime("%s")
+			result[what] = datetime.strptime(date_text, date_format).strftime("%s") * 1000
 		elif what == "changelist":
 			try:
 				changelist = []
