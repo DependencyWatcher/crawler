@@ -10,7 +10,8 @@ def subst_vars(e, vars):
 		return [subst_vars(v, vars) for v in e]
 	else:
 		for k, v in vars.iteritems():
-			e = e.replace("${%s}" % k, v)
+			if isinstance(e, basestring):
+				e = e.replace("${%s}" % k, v)
 	return e
 
 def merge_dicts(dict1, dict2):

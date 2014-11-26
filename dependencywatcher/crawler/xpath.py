@@ -69,7 +69,7 @@ class XPathDetector(Detector):
 			except KeyError:
 				date_format = "%Y%m%d%H%M%S"
 			logger.debug("Converting date '%s' using format '%s'" % (date_text, date_format))
-			result[what] = datetime.strptime(date_text, date_format).strftime("%s") * 1000
+			result[what] = long(datetime.strptime(date_text, date_format).strftime("%s")) * 1000
 		elif what == "changelist":
 			try:
 				changelist = []

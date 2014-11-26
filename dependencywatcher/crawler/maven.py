@@ -19,6 +19,7 @@ class MavenDetector(XPathDetector):
 			return ["http://central.maven.org/maven2/"]
 
 	def get_urls(self, options, result):
+		url_path = None
 		try:
 			# Search for Maven alias (such an alias will have a ':' separator):
 			for alias in self.manifest["aliases"]:
