@@ -12,7 +12,7 @@ import pprint
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-pprint.pprint(UpdateFinder().find_update(FileManifestLoader().read_manifest("jquery")))
+pprint.pprint(UpdateFinder().find_update(FileManifestLoader().read_manifest("bootstrap")))
 sys.exit()
 
 # Test: iterate on all manifests, resolve updates and print them:

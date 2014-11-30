@@ -25,8 +25,12 @@ class UpdateFinder(object):
 					detectors_cache[detector_type] = detector
 
 				detector.detect(what, detector_options, update)
-				# Substitute version in all manifest properties:
+
 				if what == "version":
+					if not update["version"]:
+						raise Exception("Can't detect version of %s" % manifest["name"])
+
+					# Substitute version in all manifest properties:
 					if last_version == update["version"]:
 						raise AlreadyLatestVersion("%s is already at latest version" % manifest["name"])
 					subst_vars(manifest, {"VERSION": update["version"]})
