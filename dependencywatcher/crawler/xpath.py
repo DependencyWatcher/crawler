@@ -38,7 +38,7 @@ class XPathDetector(Detector):
 		return element
 
 	def get_node_text(self, node):
-		if type(node) is etree._ElementStringResult:
+		if type(node) in [etree._ElementStringResult, etree._ElementUnicodeResult]:
 			return node
 		return "".join([x for x in node.itertext()])
 
