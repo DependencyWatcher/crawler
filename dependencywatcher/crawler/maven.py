@@ -1,4 +1,5 @@
 import logging, os
+from pkg_resources import parse_version
 from dependencywatcher.crawler.xpath import XPathDetector
 
 logger = logging.getLogger(__name__)
@@ -56,6 +57,13 @@ class MavenDetector(XPathDetector):
 				return r
 
 	def detect(self, what, options, result):
+		if what == "version":
+			versions = self.resolve(dict(options.items() + [("xpath", "/metadata/versioning/versions/version/text()")]), result)
+			if len(versions) > 0:
+				versions = sorted(versions, cmp=lambda x,y: cmp(parse_version(y), parse_version(x)))
+				result[what] = versions[0]
+				return
+
 		new_options = dict(options.items() + [("xpath", MavenDetector.XPATHS[what])])
 		return super(MavenDetector, self).detect(what, new_options, result)
 

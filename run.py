@@ -10,11 +10,11 @@ from multiprocessing.pool import ThreadPool
 
 import pprint
 import logging
-logging.basicConfig(level=logging.WARN)
+logging.basicConfig(level=logging.DEBUG)
 
 #pprint.pprint(UpdateFinder().find_update(FileManifestLoader().read_manifest("fontawesome")))
-pprint.pprint(UpdateFinder().find_update("bootstrap.tagsinput", "js"))
-#sys.exit()
+pprint.pprint(UpdateFinder().find_update("org.codehaus.jackson:jackson-xc", "java"))
+sys.exit()
 
 # Test: iterate on all manifests, resolve updates and print them:
 def print_result(update):
