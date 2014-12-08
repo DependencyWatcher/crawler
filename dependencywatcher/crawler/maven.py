@@ -9,7 +9,8 @@ class MavenDetector(XPathDetector):
 	XPATHS = {
 		"version": "/metadata/versioning/release/text()|/metadata/version/text()",
 		"updatetime": "/metadata/versioning/lastUpdated/text()",
-		"url": "/project/url/text()"
+		"url": "/project/url/text()",
+		"description": "/project/description/text()",
 	}
 
 	def get_repositories(self, options):

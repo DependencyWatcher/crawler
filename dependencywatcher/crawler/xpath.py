@@ -73,7 +73,7 @@ class XPathDetector(Detector):
 		elif what == "changelist":
 			try:
 				changelist = []
-				for node in self.resolve(options):
+				for node in self.resolve(options, result):
 					changelist.append(self.get_node_html(node))
 				result[what] = changelist
 			except urllib2.HTTPError:

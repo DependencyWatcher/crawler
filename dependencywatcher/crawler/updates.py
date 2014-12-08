@@ -3,8 +3,13 @@ from dependencywatcher.crawler.manifest import subst_vars
 
 class UpdateFinder(object):
 
-	def find_update_using_manifest(self, manifest, last_version=None):
-		""" Finds update for the given dependency manifest """
+	def find_update(self, what, context=None, last_version=None):
+		""" Finds update for the given dependency manifest or name """
+
+		manifest = what if isinstance(what, dict) else self.create_manifest_by_name(str(what), context)
+		if not manifest:
+			return None
+
 		update = {}
 
 		# Copy static fields:
@@ -37,25 +42,29 @@ class UpdateFinder(object):
 
 		return update
 
-	def find_update_using_alias(self, alias, last_version=None):
-		if ":" in alias:
-			""" Tries to look for an update for the given dependency alias using Maven repository """
-			manifest = {
+	def create_manifest_by_name(self, name, context=None):
+		if context == "java":
+			return {
 				"detectors": {
 					"version": { "maven": {} },
+					"description": { "maven": {} },
 					"updatetime": { "maven": {} },
 					"url": { "maven": {} }
 				},
-				"name": alias,
-				"aliases": [ alias ]
+				"name": name,
+				"aliases": [ name ]
 			}
-			return self.find_update_using_manifest(manifest, last_version)
+		if context == "js":
+			return {
+				"detectors": {
+					"version": { "jsdelivr": {} },
+					"description": { "jsdelivr": {} },
+					"url": { "jsdelivr": {} }
+				},
+				"name": name
+			}
 		return None
-
-	def find_update(self, what, last_version=None):
-		if isinstance(what, dict):
-			return self.find_update_using_manifest(what, last_version)
-		return self.find_update_using_alias(str(what), last_version)
 
 class AlreadyLatestVersion(Exception):
 	pass
+
