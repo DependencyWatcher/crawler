@@ -24,6 +24,9 @@ class Detector(object):
 		if type == "jsdelivr":
 			from dependencywatcher.crawler.jsdelivr import JSDelivrDetector
 			return JSDelivrDetector(manifest)
+		if type == "npmjs":
+			from dependencywatcher.crawler.npmjs import NPMJSDetector
+			return NPMJSDetector(manifest)
 
 		raise NotImplementedError("Detector of type '%s' is not supported" % type)
 

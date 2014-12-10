@@ -63,6 +63,17 @@ class UpdateFinder(object):
 				},
 				"name": name
 			}
+		if context == "nodejs":
+			return {
+				"detectors": {
+					"version": { "npmjs": {} },
+					"description": { "npmjs": {} },
+					"license": { "npmjs": {} },
+					"updatetime": { "npmjs": {} },
+					"url": { "npmjs": {} }
+				},
+				"name": name
+			}
 		return None
 
 class AlreadyLatestVersion(Exception):

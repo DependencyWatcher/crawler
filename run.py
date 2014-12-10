@@ -13,7 +13,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 
 #pprint.pprint(UpdateFinder().find_update(FileManifestLoader().read_manifest("fontawesome")))
-pprint.pprint(UpdateFinder().find_update("org.codehaus.jackson:jackson-xc", "java"))
+pprint.pprint(UpdateFinder().find_update("mkdirp", "nodejs"))
 sys.exit()
 
 # Test: iterate on all manifests, resolve updates and print them:
