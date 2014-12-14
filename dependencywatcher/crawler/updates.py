@@ -32,7 +32,7 @@ class UpdateFinder(object):
 				detector.detect(what, detector_options, update)
 
 				if what == "version":
-					if not update["version"]:
+					if not "version" in update:
 						raise Exception("Can't detect version of %s" % manifest["name"])
 
 					# Substitute version in all manifest properties:
