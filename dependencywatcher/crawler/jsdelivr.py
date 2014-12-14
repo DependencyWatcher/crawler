@@ -21,7 +21,7 @@ class JSDelivrDetector(Detector):
 		if self.json is None:
 			library_name = self.manifest["name"]
 			self.json = self.get(library_name)
-			if len(self.json) == 0 and not library_name.endswith("js"):
+			if not self.json and not "-" in library_name and not library_name.endswith("js"):
 				self.json = self.get(library_name + "js")
 		try:
 			if what == "url":

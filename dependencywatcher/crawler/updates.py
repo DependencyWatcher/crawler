@@ -30,15 +30,17 @@ class UpdateFinder(object):
 					detectors_cache[detector_type] = detector
 
 				detector.detect(what, detector_options, update)
+				if what in update:
+					break
 
-				if what == "version":
-					if not "version" in update:
-						raise Exception("Can't detect version of %s" % manifest["name"])
+			if what == "version":
+				if not "version" in update:
+					raise Exception("Can't detect version of %s" % manifest["name"])
 
-					# Substitute version in all manifest properties:
-					if last_version == update["version"]:
-						raise AlreadyLatestVersion("%s is already at latest version" % manifest["name"])
-					subst_vars(manifest, {"VERSION": update["version"]})
+				# Substitute version in all manifest properties:
+				if last_version == update["version"]:
+					raise AlreadyLatestVersion("%s is already at latest version" % manifest["name"])
+				subst_vars(manifest, {"VERSION": update["version"]})
 
 		return update
 
@@ -57,9 +59,9 @@ class UpdateFinder(object):
 		if context == "js":
 			return {
 				"detectors": {
-					"version": { "jsdelivr": {} },
-					"description": { "jsdelivr": {} },
-					"url": { "jsdelivr": {} }
+					"version": { "jsdelivr": {}, "cdnjs": {} },
+					"description": { "jsdelivr": {}, "cdnjs": {} },
+					"url": { "jsdelivr": {}, "cdnjs": {} }
 				},
 				"name": name
 			}
