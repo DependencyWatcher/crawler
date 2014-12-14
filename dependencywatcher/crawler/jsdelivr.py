@@ -25,11 +25,11 @@ class JSDelivrDetector(Detector):
 				self.json = self.get(library_name + "js")
 		try:
 			if what == "url":
-				result[what] = self.json["homepage"]
+				result[what] = self.normalize(what, self.json["homepage"])
 			elif what == "description":
-				result[what] = self.json["description"]
+				result[what] = self.normalize(what, self.json["description"])
 			elif what == "version":
-				result[what] = self.json["lastversion"]
+				result[what] = self.normalize(what, self.json["lastversion"])
 		except KeyError:
 			pass
 

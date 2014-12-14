@@ -57,13 +57,13 @@ class XPathDetector(Detector):
 						text = m.group(1)
 				except KeyError:
 					pass
-				return text
+				return text.strip()
 		except IndexError:
 			return None
 
 	def detect(self, what, options, result):
 		if what == "updatetime":
-			date_text = self.resolve_text(options, result)
+			date_text = self.normalize(what, self.resolve_text(options, result))
 			try:
 				date_format = options["dateFormat"]
 			except KeyError:
@@ -74,10 +74,10 @@ class XPathDetector(Detector):
 			try:
 				changelist = []
 				for node in self.resolve(options, result):
-					changelist.append(self.get_node_html(node))
+					changelist.append(self.normalize(what, self.get_node_html(node)))
 				result[what] = changelist
 			except urllib2.HTTPError:
 				logger.warning("Couldn't resolve changelist")
 		else:
-			result[what] = self.resolve_text(options, result)
+			result[what] = self.normalize(what, self.resolve_text(options, result))
 

@@ -21,13 +21,13 @@ class NPMJSDetector(Detector):
 		if not "error" in self.json:
 			try:
 				if what == "url":
-					result[what] = self.json["homepage"]
+					result[what] = self.normalize(what, self.json["homepage"])
 				elif what == "description":
-					result[what] = self.json["description"]
+					result[what] = self.normalize(what, self.json["description"])
 				elif what == "version":
-					result[what] = self.json["dist-tags"]["latest"]
+					result[what] = self.normalize(what, self.json["dist-tags"]["latest"])
 				elif what == "license":
-					result[what] = self.json["license"]
+					result[what] = self.normalize(what, self.json["license"])
 				elif what == "updatetime":
 					result[what] = long(dateutil.parser.parse(self.json["time"][result["version"]]).strftime("%s"))*1000
 			except KeyError:

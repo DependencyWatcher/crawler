@@ -8,6 +8,13 @@ class Detector(object):
 	def __init__(self, manifest):
 		self.manifest = manifest
 
+	def normalize(self, what, text):
+		if text:
+			text = text.strip()
+			if what == "description" and not text.endswith("."):
+				text = "%s." % text
+		return text
+
 	def detect(self, what, options, result):
 		raise NotImplementedError
 
