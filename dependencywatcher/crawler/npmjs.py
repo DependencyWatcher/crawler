@@ -22,12 +22,10 @@ class NPMJSDetector(Detector):
 			try:
 				if what == "url":
 					result[what] = self.normalize(what, self.json["homepage"])
-				elif what == "description":
-					result[what] = self.normalize(what, self.json["description"])
+				elif what in ["description", "license"]:
+					result[what] = self.normalize(what, self.json[what])
 				elif what == "version":
 					result[what] = self.normalize(what, self.json["dist-tags"]["latest"])
-				elif what == "license":
-					result[what] = self.normalize(what, self.json["license"])
 				elif what == "updatetime":
 					result[what] = long(dateutil.parser.parse(self.json["time"][result["version"]]).strftime("%s"))*1000
 			except KeyError:

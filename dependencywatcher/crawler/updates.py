@@ -76,6 +76,16 @@ class UpdateFinder(object):
 				},
 				"name": name
 			}
+		if context == "ruby":
+			return {
+				"detectors": {
+					"version": { "rubygems": {} },
+					"description": { "rubygems": {} },
+					"license": { "rubygems": {} },
+					"url": { "rubygems": {} }
+				},
+				"name": name
+			}
 		return None
 
 class AlreadyLatestVersion(Exception):

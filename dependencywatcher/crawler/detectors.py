@@ -37,6 +37,9 @@ class Detector(object):
 		if type == "npmjs":
 			from dependencywatcher.crawler.npmjs import NPMJSDetector
 			return NPMJSDetector(manifest)
+		if type == "rubygems":
+			from dependencywatcher.crawler.rubygems import RubyGemsDetector
+			return RubyGemsDetector(manifest)
 
 		raise NotImplementedError("Detector of type '%s' is not supported" % type)
 
