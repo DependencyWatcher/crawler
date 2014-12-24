@@ -30,6 +30,8 @@ class JSDelivrDetector(Detector):
 				result[what] = self.normalize(what, self.json["description"])
 			elif what == "version":
 				result[what] = self.normalize(what, self.json["lastversion"])
+			elif what == "updatetime":
+				result[what] = self.parse_date(self.json["created"])
 		except KeyError:
 			pass
 

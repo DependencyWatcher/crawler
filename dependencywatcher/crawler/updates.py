@@ -44,46 +44,40 @@ class UpdateFinder(object):
 
 		return update
 
+	def gen_basic_detectors(self, types):
+		detectors = {}
+		for f in ["version", "description", "license", "url", "updatetime"]:
+			for t in types:
+				if not f in detectors:
+					detectors[f] = {}
+				detectors[f][t] = {}
+		return detectors
+
 	def create_manifest_by_name(self, name, context=None):
 		if context == "java":
 			return {
-				"detectors": {
-					"version": { "maven": {} },
-					"description": { "maven": {} },
-					"updatetime": { "maven": {} },
-					"url": { "maven": {} }
-				},
+				"detectors": self.gen_basic_detectors(["maven"]),
 				"name": name,
 				"aliases": [ name ]
 			}
 		if context == "js":
 			return {
-				"detectors": {
-					"version": { "jsdelivr": {}, "cdnjs": {} },
-					"description": { "jsdelivr": {}, "cdnjs": {} },
-					"url": { "jsdelivr": {}, "cdnjs": {} }
-				},
+				"detectors": self.gen_basic_detectors(["jsdelivr", "cdnjs"]),
 				"name": name
 			}
 		if context == "nodejs":
 			return {
-				"detectors": {
-					"version": { "npmjs": {} },
-					"description": { "npmjs": {} },
-					"license": { "npmjs": {} },
-					"updatetime": { "npmjs": {} },
-					"url": { "npmjs": {} }
-				},
+				"detectors": self.gen_basic_detectors(["npmjs"]),
 				"name": name
 			}
 		if context == "ruby":
 			return {
-				"detectors": {
-					"version": { "rubygems": {} },
-					"description": { "rubygems": {} },
-					"license": { "rubygems": {} },
-					"url": { "rubygems": {} }
-				},
+				"detectors": self.gen_basic_detectors(["rubygems"]),
+				"name": name
+			}
+		if context == "python":
+			return {
+				"detectors": self.gen_basic_detectors(["pypi"]),
 				"name": name
 			}
 		return None

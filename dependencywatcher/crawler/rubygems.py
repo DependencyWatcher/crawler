@@ -4,7 +4,7 @@ import urllib2, json, logging
 logger = logging.getLogger(__name__)
 
 class RubyGemsDetector(Detector):
-	""" jsdelivr.com API based information detector """
+	""" rubygems.org API based information detector """
 	url = "https://rubygems.org/api/v1/gems/%s.json"
 
 	def __init__(self, manifest):

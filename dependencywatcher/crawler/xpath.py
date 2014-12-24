@@ -1,4 +1,3 @@
-from datetime import datetime
 from lxml import etree, html
 import urllib2, logging, _strptime, re
 from dependencywatcher.crawler.detectors import Detector
@@ -69,7 +68,7 @@ class XPathDetector(Detector):
 			except KeyError:
 				date_format = "%Y%m%d%H%M%S"
 			logger.debug("Converting date '%s' using format '%s'" % (date_text, date_format))
-			result[what] = long(datetime.strptime(date_text, date_format).strftime("%s")) * 1000
+			result[what] = self.parse_date(date_text, date_format)
 		elif what == "changelist":
 			try:
 				changelist = []

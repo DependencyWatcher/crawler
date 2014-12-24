@@ -1,6 +1,5 @@
 from dependencywatcher.crawler.detectors import Detector
 import urllib2, json, logging
-import dateutil.parser
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +26,7 @@ class NPMJSDetector(Detector):
 				elif what == "version":
 					result[what] = self.normalize(what, self.json["dist-tags"]["latest"])
 				elif what == "updatetime":
-					result[what] = long(dateutil.parser.parse(self.json["time"][result["version"]]).strftime("%s"))*1000
+					result[what] = self.parse_date(self.json["time"][result["version"]])
 			except KeyError:
 				pass
 
