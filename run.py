@@ -12,8 +12,8 @@ import pprint
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-#pprint.pprint(UpdateFinder().find_update(FileManifestLoader().read_manifest("fontawesome")))
-pprint.pprint(UpdateFinder().find_update("rails", "ruby"))
+#pprint.pprint(UpdateFinder().find_update(FileManifestLoader().read_manifest("junit:junit")))
+pprint.pprint(UpdateFinder().find_update("junit:junit", "java"))
 sys.exit()
 
 # Test: iterate on all manifests, resolve updates and print them:

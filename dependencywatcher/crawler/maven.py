@@ -64,6 +64,9 @@ class MavenDetector(XPathDetector):
 				result[what] = versions[0]
 				return
 
-		new_options = dict(options.items() + [("xpath", MavenDetector.XPATHS[what])])
-		return super(MavenDetector, self).detect(what, new_options, result)
+		try:
+			new_options = dict(options.items() + [("xpath", MavenDetector.XPATHS[what])])
+			return super(MavenDetector, self).detect(what, new_options, result)
+		except KeyError:
+			return None
 
