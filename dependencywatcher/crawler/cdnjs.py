@@ -27,8 +27,9 @@ class CDNJSDetector(Detector):
 				self.json = self.get(library_name.replace("-", ""))
 			if not self.json and not library_name.endswith("js"):
 				self.json = self.get(library_name + "js")
-		try:
-			result[what] = self.normalize(what, self.json[what])
-		except KeyError:
-			pass
+		if self.json:
+			try:
+				result[what] = self.normalize(what, self.json[what])
+			except KeyError:
+				pass
 

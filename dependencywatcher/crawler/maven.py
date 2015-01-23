@@ -12,6 +12,7 @@ class MavenDetector(XPathDetector):
 		"updatetime": "/metadata/versioning/lastUpdated/text()",
 		"url": "/project/url/text()",
 		"description": "/project/description/text()",
+		"license": "/project/licenses/license/name/text()"
 	}
 
 	def get_repositories(self, options):
