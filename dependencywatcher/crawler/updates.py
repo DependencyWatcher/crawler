@@ -52,7 +52,7 @@ class UpdateFinder(object):
                             detectors_blacklist.append(detector_type)
 
                 if what == "version":
-                    if not "version" in update:
+                    if not "version" in update or not update["version"]:
                         raise Exception("Can't detect version of %s" % manifest["name"])
 
                     # Substitute version in all manifest properties:
