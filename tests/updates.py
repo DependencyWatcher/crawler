@@ -9,7 +9,7 @@ class UpdatesTest(unittest.TestCase):
 
     def assertHasInfo(self, update, keys):
         for k in keys:
-            self.assertIsNotNone(update[k])
+            self.assertIsNotNone(update[k], "Can't find %s in update" % k)
 
     def assertHasAllInfo(self, update):
         self.assertHasInfo(update, ["name", "description", "license", "version", "stable_version", "updatetime"])
