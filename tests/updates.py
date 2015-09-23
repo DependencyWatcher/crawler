@@ -12,5 +12,5 @@ class UpdatesTest(unittest.TestCase):
             self.assertIsNotNone(update[k])
 
     def assertHasAllInfo(self, update):
-        self.assertHasInfo(update, ["name", "description", "license", "version", "updatetime"])
+        self.assertHasInfo(update, ["name", "description", "license", "version", "stable_version", "updatetime"])
 

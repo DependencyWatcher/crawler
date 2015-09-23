@@ -1,4 +1,4 @@
-__all__ = ["detectors", "manifest", "updates"]
+__all__ = []
 
 import dependencywatcher.crawler.xpath
 import dependencywatcher.crawler.maven

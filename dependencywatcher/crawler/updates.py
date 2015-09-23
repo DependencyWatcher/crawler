@@ -1,5 +1,7 @@
 from dependencywatcher.crawler.detectors import *
 from dependencywatcher.crawler.manifest import subst_vars
+from dependencywatcher.crawler.utils import VersionUtil
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -25,37 +27,44 @@ class UpdateFinder(object):
         detectors = manifest["detectors"]
         detectors_blacklist = []
         for what in ["version"] + [k for k in detectors.keys() if k != "version"]:
-            for detector_type, detector_options in detectors[what].iteritems():
-                if not detector_type in detectors_blacklist:
-                    try:
-                        detector = detectors_cache[detector_type]
-                    except KeyError:
-                        detector = Detector.create(detector_type, manifest)
-                        detectors_cache[detector_type] = detector
 
-                    try:
-                        detector.detect(what, detector_options, update)
-                        if what in update:
-                            break
-                    except Exception as e:
-                        logger.debug(e)
-                        logger.debug("Adding %s detector to blacklist" % detector_type)
-                        detectors_blacklist.append(detector_type)
+            # Check whether version we already have is a stable one, then skip the retreival:
+            if what == "stable_version" and VersionUtil.is_stable(update["version"]):
+                update[what] = update["version"]
+                continue
+            else:
+                for detector_type, detector_options in detectors[what].iteritems():
+                    if not detector_type in detectors_blacklist:
+                        try:
+                            detector = detectors_cache[detector_type]
+                        except KeyError:
+                            detector = Detector.create(detector_type, manifest)
+                            detectors_cache[detector_type] = detector
 
-            if what == "version":
-                if not "version" in update:
-                    raise Exception("Can't detect version of %s" % manifest["name"])
+                        logger.debug("Looking for %s using detector %s" % (what, detector_type))
+                        try:
+                            detector.detect(what, detector_options, update)
+                            if what in update:
+                                break
+                        except Exception as e:
+                            logger.debug(e)
+                            logger.debug("Adding %s detector to blacklist" % detector_type)
+                            detectors_blacklist.append(detector_type)
 
-                # Substitute version in all manifest properties:
-                if last_version == update["version"]:
-                    raise AlreadyLatestVersion("%s is already at latest version" % manifest["name"])
-                subst_vars(manifest, {"VERSION": update["version"]})
+                if what == "version":
+                    if not "version" in update:
+                        raise Exception("Can't detect version of %s" % manifest["name"])
+
+                    # Substitute version in all manifest properties:
+                    if last_version == update["version"]:
+                        raise AlreadyLatestVersion("%s is already at latest version" % manifest["name"])
+                    subst_vars(manifest, {"VERSION": update["version"]})
 
         return update
 
     def gen_basic_detectors(self, types):
         detectors = {}
-        for f in ["version", "description", "license", "url", "updatetime"]:
+        for f in ["version", "stable_version", "description", "license", "url", "updatetime"]:
             for t in types:
                 if not f in detectors:
                     detectors[f] = {}

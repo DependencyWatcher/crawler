@@ -1,4 +1,5 @@
 from dependencywatcher.crawler.detectors import Detector
+from dependencywatcher.crawler.utils import VersionUtil
 import urllib2, json, logging
 
 logger = logging.getLogger(__name__)
@@ -34,6 +35,8 @@ class JSDelivrDetector(Detector):
                 result[what] = self.normalize(what, self.json["lastversion"])
             elif what == "updatetime":
                 result[what] = self.parse_date(self.json["meta"]["created"])
+            elif what == "stable_version":
+                result[what] = VersionUtil.find_stable(self.json["versions"])
         except KeyError:
             pass
 

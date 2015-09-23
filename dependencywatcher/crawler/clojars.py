@@ -1,4 +1,5 @@
 from dependencywatcher.crawler.detectors import Detector
+from dependencywatcher.crawler.utils import VersionUtil
 import urllib2, json, logging
 
 logger = logging.getLogger(__name__)
@@ -9,14 +10,21 @@ class ClojarsDetector(Detector):
 
     def __init__(self, manifest):
         self.json = None
+        clojars_url = "https://clojars.org/%s" % manifest["name"].replace(":", "/")
         self.web_detector = Detector.create("xpath", {
             "name": manifest["name"],
             "detectors": {
                 "updatetime": {
                     "xpath": {
-                        "url": "https://clojars.org/%s" % manifest["name"].replace(":", "/"),
+                        "url": clojars_url,
                         "xpath": "//span[@title != '']/@title",
                         "dateFormat": "%a %b %d %H:%M:%S %Z %Y"
+                    }
+                },
+                "url": {
+                    "xpath": {
+                        "url": clojars_url,
+                        "xpath": "//ul[@id='jar-info-bar']//a/@href"
                     }
                 }
             }
@@ -31,14 +39,18 @@ class ClojarsDetector(Detector):
 
         try:
             if what == "url":
-                result[what] = self.normalize(what, self.json["homepage"])
+                if what in self.json:
+                    result[what] = self.normalize(what, self.json["homepage"])
+                else:
+                    self.web_detector.detect(what, self.web_detector.manifest["detectors"][what]["xpath"], result)
             elif what in ["description", "license", "updatetime"]:
                 if what in self.json:
                     result[what] = self.normalize(what, self.json[what])
                 else:
                     self.web_detector.detect(what, self.web_detector.manifest["detectors"][what]["xpath"], result)
-            elif what == "version":
-                result[what] = self.normalize(what, self.json["latest_version"])
+            elif what == "version" or what == "stable_version":
+                versions = [v["version"] for v in self.json["recent_versions"]]
+                result[what] = VersionUtil.find_latest(versions) if what == "version" else VersionUtil.find_stable(versions)
         except KeyError:
             pass
 
