@@ -10,20 +10,20 @@ class ClojarsDetector(Detector):
 
     def __init__(self, manifest):
         self.json = None
-        clojars_url = "https://clojars.org/%s" % manifest["name"].replace(":", "/")
+        self.clojars_url = "https://clojars.org/%s" % manifest["name"].replace(":", "/")
         self.web_detector = Detector.create("xpath", {
             "name": manifest["name"],
             "detectors": {
                 "updatetime": {
                     "xpath": {
-                        "url": clojars_url,
+                        "url": self.clojars_url,
                         "xpath": "//span[@title != '']/@title",
                         "dateFormat": "%a %b %d %H:%M:%S %Z %Y"
                     }
                 },
                 "url": {
                     "xpath": {
-                        "url": clojars_url,
+                        "url": self.clojars_url,
                         "xpath": "//ul[@id='jar-info-bar']//a/@href"
                     }
                 }
@@ -43,6 +43,8 @@ class ClojarsDetector(Detector):
                     result[what] = self.normalize(what, self.json["homepage"])
                 else:
                     self.web_detector.detect(what, self.web_detector.manifest["detectors"][what]["xpath"], result)
+                if not result[what]:
+                    result[what] = self.clojars_url
             elif what in ["description", "license", "updatetime"]:
                 if what in self.json:
                     result[what] = self.normalize(what, self.json[what])
