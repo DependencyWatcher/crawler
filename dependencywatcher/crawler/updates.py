@@ -47,7 +47,7 @@ class UpdateFinder(object):
                             if what in update:
                                 break
                         except Exception as e:
-                            logger.debug(e)
+                            logger.exception(e)
                             logger.debug("Adding %s detector to blacklist" % detector_type)
                             detectors_blacklist.append(detector_type)
 

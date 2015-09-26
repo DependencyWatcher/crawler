@@ -31,7 +31,7 @@ class Detector(object):
         if parsed is not None:
             timestamp = int(parsed.strftime("%s"))
         if timestamp is None:
-            if isinstance(text, int):
+            if isinstance(text, int) or isinstance(text, long):
                 timestamp = text
             elif text.isdigit():
                 timestamp = int(text)
