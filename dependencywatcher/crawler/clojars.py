@@ -10,9 +10,14 @@ class ClojarsDetector(Detector):
 
     def __init__(self, manifest):
         self.json = None
-        self.clojars_url = "https://clojars.org/%s" % manifest["name"].replace(":", "/")
-        self.web_detector = Detector.create("xpath", {
-            "name": manifest["name"],
+        name = manifest["name"]
+        self.clojars_url = "https://clojars.org/%s" % name.replace(":", "/")
+        maven_alias = name.replace("/", ":")
+        if not ":" in maven_alias:
+            maven_alias = "%s:%s" % (maven_alias, maven_alias)
+        self.maven_detector = Detector.create("xpath", {
+            "name": name,
+            "aliases": [maven_alias],
             "detectors": {
                 "updatetime": {
                     "xpath": {
@@ -42,14 +47,14 @@ class ClojarsDetector(Detector):
                 if what in self.json:
                     result[what] = self.normalize(what, self.json["homepage"])
                 else:
-                    self.web_detector.detect(what, self.web_detector.manifest["detectors"][what]["xpath"], result)
+                    self.maven_detector.detect(what, self.maven_detector.manifest["detectors"][what]["xpath"], result)
                 if not result[what]:
                     result[what] = self.clojars_url
             elif what in ["description", "license", "updatetime"]:
                 if what in self.json:
                     result[what] = self.normalize(what, self.json[what])
                 else:
-                    self.web_detector.detect(what, self.web_detector.manifest["detectors"][what]["xpath"], result)
+                    self.maven_detector.detect(what, self.maven_detector.manifest["detectors"][what]["xpath"], result)
             elif what == "version" or what == "stable_version":
                 versions = [v["version"] for v in self.json["recent_versions"]]
                 result[what] = VersionUtil.find_latest(versions) if what == "version" else VersionUtil.find_stable(versions)

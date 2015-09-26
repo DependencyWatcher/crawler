@@ -47,7 +47,7 @@ class UpdateFinder(object):
                             if what in update:
                                 break
                         except Exception as e:
-                            logger.exception(e)
+                            logger.debug(e)
                             logger.debug("Adding %s detector to blacklist" % detector_type)
                             detectors_blacklist.append(detector_type)
 
@@ -73,10 +73,13 @@ class UpdateFinder(object):
 
     def create_manifest_by_name(self, name, context=None):
         if context == "java":
+            maven_alias = name.replace("/", ":")
+            if not ":" in maven_alias:
+                maven_alias = "%s:%s" % (maven_alias, maven_alias)
             return {
                 "detectors": self.gen_basic_detectors(["maven", "clojars"]),
                 "name": name,
-                "aliases": [ name ]
+                "aliases": [ maven_alias ]
             }
         if context == "js":
             return {
